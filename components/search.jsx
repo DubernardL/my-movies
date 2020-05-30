@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, TextInput, Button, Text, FlatList, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, TextInput, Button, Text, FlatList, ActivityIndicator, TouchableOpacity, Image } from 'react-native'
 import FilmItem from './FilmItem'
 import FilmList from './FilmList'
 import { getFilmsFromApiWithSearchedText } from '../API/TMDBApi'
@@ -59,13 +59,18 @@ class Search extends React.Component {
   render() {
     return (
       <View style={styles.main_container}>
-        <TextInput
-          style={styles.textinput}
-          placeholder='Titre du film'
-          onChangeText={(text) => this._searchTextInputChanged(text)}
-          onSubmitEditing={() => this._searchFilms()}
-        />
-        <Button title='Rechercher' onPress={() => this._searchFilms()}/>
+        <View style={styles.search_container}>
+          <TextInput
+            style={styles.textinput}
+            placeholder='Titre du film'
+            onChangeText={(text) => this._searchTextInputChanged(text)}
+            onSubmitEditing={() => this._searchFilms()}
+          />
+          <TouchableOpacity style={styles.search_button} onPress={() => this._searchFilms()}>
+            <Image style={styles.research_image} source={require('../assets/research_btn.png')} />
+          </TouchableOpacity>
+        </View>
+
         <FilmList
           films={this.state.films} // C'est bien le component Search qui récupère les films depuis l'API et on les transmet ici pour que le component FilmList les affiche
           navigation={this.props.navigation} // Ici on transmet les informations de navigation pour permettre au component FilmList de naviguer vers le détail d'un film
@@ -81,15 +86,33 @@ class Search extends React.Component {
 
 const styles = StyleSheet.create({
   main_container: {
-    flex: 1
+    flex: 1,
+    paddingHorizontal: 20
+  },
+  search_container: {
+    flexDirection: 'row',
+    marginVertical: 15
+  },
+  search_button: {
+    width: 50,
+    height: 50,
+    borderRadius: 5,
+    backgroundColor: '#54a9d3'
+  },
+  research_image: {
+    flex: 1,
+    width: 50,
+    height: 50
   },
   textinput: {
-    marginLeft: 5,
-    marginRight: 5,
+    flex: 1,
+    width: 50,
     height: 50,
-    borderColor: '#000000',
-    borderWidth: 1,
-    paddingLeft: 5
+    borderColor: '#adc9c9',
+    borderWidth: 2,
+    paddingLeft: 5,
+    borderRadius: 5,
+    marginRight: 5
   },
   loading_container: {
     position: 'absolute',
