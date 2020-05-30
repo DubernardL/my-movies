@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, Image, TouchableOpacity } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
-import Constants from 'expo-constants';
+// import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import { connect } from 'react-redux'
 

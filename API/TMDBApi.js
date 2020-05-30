@@ -7,6 +7,20 @@ export function getFilmsFromApiWithSearchedText (text, page) {
   .catch((error) => console.log(error))
 }
 
+export function getNewFilmsFromApi(page) {
+  const url = 'https://api.themoviedb.org/3/movie/now_playing?api_key=' + API_TOKEN + '&vote_count.gte=1000&sort_by=release_date.desc&language=fr' + "&page=" + page
+  return fetch(url)
+  .then((response) => response.json())
+  .catch((error) => console.log(error))
+}
+
+export function getTopRatedFilmsFromApi(page) {
+  const url = 'https://api.themoviedb.org/3/movie/top_rated?api_key=' + API_TOKEN + '&language=fr' + "&page=" + page
+  return fetch(url)
+  .then((response) => response.json())
+  .catch((error) => console.log(error))
+}
+
 export function getImageFromApi(name) {
   return "https://image.tmdb.org/t/p/w300" + name
 }
