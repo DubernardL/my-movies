@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, TextInput, Button, Text, FlatList, ActivityIndicator, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, View, TextInput, Button, Text, FlatList, ActivityIndicator, TouchableOpacity, Image, Keyboard } from 'react-native'
 import FilmItem from './FilmItem'
 import FilmList from './FilmList'
 import { getFilmsFromApiWithSearchedText } from '../API/TMDBApi'
@@ -37,6 +37,7 @@ class Search extends React.Component {
   }
 
   _searchFilms() {
+    Keyboard.dismiss()
     this.page = 0
     this.totalPages = 0
     this.setState({
