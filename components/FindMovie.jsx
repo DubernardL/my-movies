@@ -16,9 +16,11 @@ class FindMovie extends React.Component {
       checked: false,
       categories_id: [],
       categories_id_selected: [],
-      min_rating: [0],
-      popularity: false,
-      similar_movie_id: []
+      min_rating: 0,
+      popularity_status: false,
+      popularity: 40,
+      similar_movie_id: [],
+      films: []
     }
   }
 
@@ -29,40 +31,27 @@ class FindMovie extends React.Component {
       })
     })
   }
-  enableScroll = () => this.setState({ scrollEnabled: true });
-  disableScroll = () => this.setState({ scrollEnabled: false });
 
   _toogleChecked() {
     if(this.state.checked) {
       this.setState({
         checked: false,
-        popularity: false
+        popularity_status: false
       })
     } else {
       this.setState({
         checked: true,
-        popularity: true
+        popularity_status: true,
+
       })
     }
   }
 
+  _findMovies() {
+
+  }
+
   render() {
-    const notes = {"1":"1", "2":"2", "3":"3", "4":"4", "5":"5", "6":"6", "7":"7", "8":"8", "9":"9", "10":"10"}
-
-    const similar = [
-      { id: 1, name: 'xx ezdcze' },
-      { id: 2, name: 'cecezcez' },
-      { id: 3, name: 'cezcezcez' },
-      { id: 4, name: 'czeczecze' },
-      { id: 5, name: 'cezczeczec' },
-      { id: 6, name: 'brtrbtrtb6' },
-      { id: 7, name: 'brtbrtbr' },
-      { id: 8, name: 'brttbrbrt' },
-      { id: 9, name: 'brtbrtbrb' },
-      { id: 10, name: 'vcxv' }
-    ]
-
-
     return (
       <View style={styles.main_container}>
 
@@ -94,41 +83,13 @@ class FindMovie extends React.Component {
 
         <CheckBox
           center
-          title='Trouver dans les films les plus populaire'
+          title='Trouver dans les films les plus populaires'
           iconRight
           checked={this.state.checked}
           onPress={() => {this._toogleChecked()}}
         />
 
-        <Text>{this.state.popularity}</Text>
-
-        <CustomMultiPicker
-          options={notes}
-          search={false}
-          multiple={false}
-          returnValue={"label"} // label or value
-          callback={(data)=>{ this.setState({ data }) }} // callback, array of selected items
-          rowBackgroundColor={"#eee"}
-          rowHeight={40}
-          rowRadius={5}
-          iconColor={"#00a2dd"}
-          iconSize={30}
-          scrollViewHeight={130}
-        />
-
-
-        <Button title='Trouver film' onPress={() => {}} />
-
-
-        <Text> ///////// genre //////</Text>
-        <FlatList
-          data={this.state.categories_id_selected}
-          keyExtractor={(item) => item.toString()}
-          renderItem={({item}) => (
-            <Text>{item}</Text>
-          )}
-        />
-
+        <Button title='Trouver film' onPress={this._findMovies()} />
       </View>
     )
   }
