@@ -16,6 +16,17 @@ class FilmItem extends React.Component {
     }
   }
 
+  _displaySeen() {
+    if(this.props.isMovieSeen) {
+      return(
+        <Image
+          style={styles.favorite_image}
+          source={require('../assets/seen.png')}
+        />
+      )
+    }
+  }
+
   render() {
     // const film = this.props.film
     // const displayDetailForFilm = this.props.displayDetailForFilm
@@ -31,11 +42,16 @@ class FilmItem extends React.Component {
             source={{uri: getImageFromApi(film.poster_path)}}
           />
           <View style={styles.content_container}>
+
             <View style={styles.header_container}>
+            <View style={{flexDirection: 'column'}}>
               {this._displayFav()}
+              {this._displaySeen()}
+            </View>
               <Text style={styles.title_text}>{film.title}</Text>
               <Text style={styles.vote_text}>{film.vote_average}</Text>
             </View>
+
             <View style={styles.description_container}>
               <Text style={styles.description_text} numberOfLines={6}>{film.overview}</Text>
             </View>

@@ -7,8 +7,8 @@ import { createBottomTabNavigator } from 'react-navigation-tabs'
 import Search from '../components/search'
 import FilmDetail from '../components/FilmDetail'
 import Favorites from '../components/Favorites'
-import News from '../components/News'
-import TopRatedFilms from '../components/Top'
+import Seen from '../components/Seen'
+import FindMovie from '../components/FindMovie'
 
 const SearchStackNavigator1 = createStackNavigator({
   Search: {
@@ -34,26 +34,23 @@ const FavoritesStackNavigator = createStackNavigator({
   }
 })
 
-const NewsStackNavigator = createStackNavigator({
-  News: {
-    screen: News,
+const SeenStackNavigator = createStackNavigator({
+  Seen: {
+    screen: Seen,
     navigationOptions: {
-      title: 'News'
-    },
-    FilmDetail: {
-      screen: FilmDetail
+      title: 'Films vus'
     }
+  },
+  FilmDetail: {
+    screen: FilmDetail
   }
 })
 
-const TopStackNavigator = createStackNavigator({
-  TopRatedFilms: {
-    screen: TopRatedFilms,
+const FindMovieStackNavigator = createStackNavigator({
+  FindMovie: {
+    screen: FindMovie,
     navigationOptions: {
-      title: 'Top Films'
-    },
-    FilmDetail: {
-      screen: FilmDetail
+      title: 'Trouver un film'
     }
   }
 })
@@ -80,22 +77,22 @@ const MoviesTabNavigator = createBottomTabNavigator(
         }
       }
     },
-    News: {
-      screen: NewsStackNavigator,
+    Seen: {
+      screen: SeenStackNavigator,
       navigationOptions: {
         tabBarIcon: () => {
           return <Image
-            source={require('../assets/new.png')}
+            source={require('../assets/seen.png')}
             style={styles.icon}/>
         }
       }
     },
-    TopRatedFilms: {
-      screen: TopStackNavigator,
+    FindMovie: {
+      screen: FindMovieStackNavigator,
       navigationOptions: {
         tabBarIcon: () => {
           return <Image
-            source={require('../assets/trophy.png')}
+            source={require('../assets/seen.png')}
             style={styles.icon}/>
         }
       }

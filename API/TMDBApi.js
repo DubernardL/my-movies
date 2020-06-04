@@ -30,3 +30,9 @@ export function getFilmDetailFromApi(id) {
     .then((response) => response.json())
     .catch((error) => console.error(error));
 }
+
+export async function getCategoriesFromApi() {
+  let response = await fetch('https://api.themoviedb.org/3/genre/movie/list' + '?api_key=' + TMDB_API_KEY + '&language=fr')
+  let data = await response.json()
+  return data
+}

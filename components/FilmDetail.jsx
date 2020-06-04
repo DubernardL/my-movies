@@ -129,6 +129,29 @@ class FilmDetail extends React.Component {
       )
   }
 
+  _toggleSeen() {
+    const action = { type:'TOGGLE_SEEN', value: this.state.film }
+    this.props.dispatch(action)
+  }
+
+  _displaySeenImage() {
+    let sourceImage = require('../assets/not_seen.png')
+    let shouldEnlarge = false
+    if(this.props.seenMovies.findIndex(item => item.id === this.state.film.id) !== -1) {
+      // Déjà dans les vus
+      sourceImage = require('../assets/seen.png')
+      shouldEnlarge = true
+    }
+    return (
+        <EnlargeShrink shouldEnlarge={shouldEnlarge}>
+          <Image
+            source={sourceImage}
+            style={styles.favorite_image}/>
+        </EnlargeShrink>
+      )
+  }
+
+
   _displayFilm() {
     const { film } = this.state
     if (film != undefined) {
@@ -139,11 +162,20 @@ class FilmDetail extends React.Component {
             source={{uri: getImageFromApi(film.backdrop_path)}}
           />
           <Text style={styles.title_text}>{film.title}</Text>
-          <TouchableOpacity
-            onPress={() => this._toggleFavorite() }
-            style={styles.favorite_container}>
-            {this._displayFavoriteImage()}
-          </TouchableOpacity>
+
+          <View style={styles.icons}>
+            <TouchableOpacity
+              onPress={() => this._toggleFavorite() }
+              style={styles.favorite_container}>
+              {this._displayFavoriteImage()}
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this._toggleSeen() }
+              style={styles.favorite_container}>
+              {this._displaySeenImage()}
+            </TouchableOpacity>
+          </View>
+
           <Text style={styles.description_text}>{film.overview}</Text>
           <Text style={styles.default_text}>Sorti le {moment(new Date(film.release_date)).format('DD/MM/YYYY')}</Text>
           <Text style={styles.default_text}>Note : {film.vote_average} / 10</Text>
@@ -205,6 +237,11 @@ const styles = StyleSheet.create({
     color: '#000000',
     textAlign: 'center'
   },
+  icons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   description_text: {
     fontStyle: 'italic',
     color: '#666666',
@@ -217,7 +254,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   favorite_container: {
-    alignItems: 'center'
+    alignItems: 'center',
+    marginHorizontal: 15
   },
   favorite_image: {
     flex: 1,
@@ -243,7 +281,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    favoriteFilm: state.toggleFavorite.favoriteFilm
+    favoriteFilm: state.toggleFavorite.favoriteFilm,
+    seenMovies: state.toggleSeen.seenMovies
   }
 }
 
