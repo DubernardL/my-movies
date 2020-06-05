@@ -9,6 +9,7 @@ import FilmDetail from '../components/FilmDetail'
 import Favorites from '../components/Favorites'
 import Seen from '../components/Seen'
 import FindMovie from '../components/FindMovie'
+import FindMovieList from '../components/FindMovieList'
 
 const SearchStackNavigator1 = createStackNavigator({
   Search: {
@@ -52,6 +53,9 @@ const FindMovieStackNavigator = createStackNavigator({
     navigationOptions: {
       title: 'Trouver un film'
     }
+  },
+  FindMovieList: {
+    screen: FindMovieList
   }
 })
 

@@ -13,6 +13,8 @@ function toggleSeen(state = initialState, action) {
         }
       }
       else {
+        // For the picker
+        action.value.name = action.value.title
         // Ajoute le film dans les favoris
         nextState = {
           ...state,

@@ -1,10 +1,13 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button, FlatList } from 'react-native'
-import FindMovieInputs from './FindMovieInputs'
-import { getCategoriesFromApi } from '../API/TMDBApi'
+import { connect } from 'react-redux'
+// Pickers
 import Select2 from 'react-native-select-two'
 import CustomMultiPicker from "react-native-multiple-select-list"
-import { Slider, CheckBox } from 'react-native-elements';
+import { Slider, CheckBox } from 'react-native-elements'
+import SearchableDropdown from 'react-native-searchable-dropdown';
+// API calls
+import { getCategoriesFromApi } from '../API/TMDBApi'
 
 class FindMovie extends React.Component {
 
@@ -14,13 +17,12 @@ class FindMovie extends React.Component {
     this.totalPages = 0
     this.state = {
       checked: false,
+      popularity_status: false,
       categories_id: [],
       categories_id_selected: [],
       min_rating: 0,
-      popularity_status: false,
       popularity: 40,
-      similar_movie_id: [],
-      films: []
+      similar_movie_id: null
     }
   }
 
@@ -42,16 +44,18 @@ class FindMovie extends React.Component {
       this.setState({
         checked: true,
         popularity_status: true,
-
       })
     }
   }
 
-  _findMovies() {
-
+  navigateToSlider() {
+    this.props.navigation.navigate('FindMovieList', {
+      similar_movie_id: this.state.similar_movie_id
+    })
   }
 
   render() {
+    const { navigation } = this.props
     return (
       <View style={styles.main_container}>
 
@@ -86,10 +90,26 @@ class FindMovie extends React.Component {
           title='Trouver dans les films les plus populaires'
           iconRight
           checked={this.state.checked}
-          onPress={() => {this._toogleChecked()}}
+          onPress={() => {}}
         />
 
-        <Button title='Trouver film' onPress={this._findMovies()} />
+
+        <Select2
+          isSelectSingle
+          style={{ borderRadius: 5 }}
+          colorTheme={'blue'}
+          popupTitle='Selectionner un ou plusieurs genres'
+          title='Selection genre(s)'
+          cancelButtonText='Annuler'
+          selectButtonText='Valider'
+          searchPlaceHolderText='Entrez un genre'
+          listEmptyTitle='Désolé on a pas :/'
+          data={this.props.seenMovies}
+          onSelect={data => this.setState({ similar_movie_id: data })}
+          onRemoveItem={data => { this.setState({ similar_movie_id: data })}}
+        />
+
+        <Button title='Trouver film' onPress={() => {this.navigateToSlider()}} />
       </View>
     )
   }
@@ -102,4 +122,11 @@ const styles = StyleSheet.create({
   }
 })
 
-export default FindMovie;
+const mapStateToProps = state => {
+  return {
+    seenMovies: state.toggleSeen.seenMovies
+  }
+}
+
+export default connect(mapStateToProps)(FindMovie)
+
