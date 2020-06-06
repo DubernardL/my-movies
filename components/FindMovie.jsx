@@ -89,7 +89,6 @@ class FindMovie extends React.Component {
 
         <Text>{this.state.popularity_checked}</Text>
 
-
         <Select2
           isSelectSingle
           style={{ borderRadius: 5 }}

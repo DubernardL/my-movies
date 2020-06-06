@@ -1,9 +1,9 @@
 import React from 'react'
 import { StyleSheet, FlatList, Text, View, Button, Image } from 'react-native'
-import MoviesCard from './MoviesCard'
+import { connect } from 'react-redux'
+
 // API calls
-import { getSimilarMovies } from '../API/TMDBApi'
-import { getImageFromApi } from '../API/TMDBApi'
+import { getSimilarMovies, getImageFromApi } from '../API/TMDBApi'
 import Swiper from 'react-native-deck-swiper'
 
 class FindMovieList extends React.Component {
@@ -11,24 +11,49 @@ class FindMovieList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      page: 1,
+      visited_pages: [],
+      total_pages: 1,
+      length_card: 0,
       cards: [],
-      films: [],
-      swipeDirection: '',
-      cardIndex: 0
+      swipedAllCards: false
     }
   }
 
   componentDidMount(){
+    this.loadMovies()
+  }
+
+  loadMovies() {
     if(this.props.navigation.state.params.similar_movie_id != null) {
-      getSimilarMovies(this.props.navigation.state.params.similar_movie_id[0], 1).then(data => {
+      getSimilarMovies(this.props.navigation.state.params.similar_movie_id[0], this.state.page).then(data => {
         this.setState({
-          cards: data.results
+          cards: [...this.state.cards, ...data.results],
+          length_card: this.state.cards.length,
+          total_pages: data.total_pages
         })
       })
+
+      let RandomNumber = Math.floor(Math.random() * this.state.total_pages) + 1
+
+      if(this.state.visited_pages.length - 1 < this.state.total_pages) {
+        while(this.state.visited_pages.includes(RandomNumber)) {
+          let RandomNumber = Math.floor(Math.random() * this.state.total_pages) + 1
+        }
+        this.setState({
+          page: RandomNumber,
+          visited_pages: [...this.state.visited_pages, this.state.page]
+        })
+      } else {
+        this.setState({
+          page: 1,
+          visited_pages: []
+        })
+      }
     }
   }
 
- renderCard = (card, index) => {
+  renderCard = (card, index) => {
     if (card != undefined) {
       return (
         <View style={styles.card}>
@@ -39,27 +64,71 @@ class FindMovieList extends React.Component {
             />
           </View>
           <View style={styles.description}>
+            <View style={styles.img_container}>
+              {this.diplayFav(card)}
+              {this.diplaySeen(card)}
+            </View>
             <Text style={styles.title}>{card.title}</Text>
-            <Text style={styles.overview}>{card.overview}</Text>
+            <Text style={styles.overview} numberOfLines={9}>{card.overview}</Text>
           </View>
         </View>
       )
     }
-  };
-
-  onSwiped = (type) => {
-    console.log(`on swiped ${type}`)
   }
 
-  onSwipedAllCards = () => {
-    this.setState({
-      swipedAllCards: true
-    })
-    console.log('All card swipped')
-  };
+  diplayFav(movie) {
+    const favContain = this.props.favoriteFilm.find(e => e.id === movie.id)
+    if(favContain != undefined) {
+      return(<Image source={require('../assets/seen.png')} style={styles.favorite_image}/>)
+    }
+  }
+
+  diplaySeen(movie) {
+    const seenContain = this.props.seenMovies.find(e => e.id === movie.id)
+    if(seenContain != undefined) {
+      return(<Image source={require('../assets/plain_heart.png')} style={styles.favorite_image}/>)
+    }
+  }
+
+  addMovieToFav(movie) {
+    const action = { type:'TOGGLE_FAVORITE', value: movie }
+    this.props.dispatch(action)
+  }
+
+  addMovieToSeen(movie) {
+    const action = { type:'TOGGLE_SEEN', value: movie }
+    this.props.dispatch(action)
+  }
+
+  onSwiped = (type, cardIndex) => {
+    const movie = this.state.cards[cardIndex]
+    const favContain = this.props.favoriteFilm.find(e => e.id === movie.id)
+    const seenContain = this.props.seenMovies.find(e => e.id === movie.id)
+
+    if(type === 'right' && favContain === undefined) {
+      this.addMovieToFav(movie)
+    }
+
+    if(type === 'top' && seenContain === undefined) {
+      this.addMovieToSeen(movie)
+    }
+    // Dernière card ???
+    if(cardIndex === this.state.length_card) {
+      console.log(cardIndex + '/' + this.state.length_card)
+      console.log(this.state.visited_pages)
+      this.loadMovies()
+    }
+  }
 
   swipeLeft = () => {
     this.swiper.swipeLeft()
+  }
+
+  onSwipedAllCards = () => {
+    console.log('All card swipped')
+    this.setState({
+      swipedAllCards: true
+    })
   };
 
   render () {
@@ -70,16 +139,17 @@ class FindMovieList extends React.Component {
             this.swiper = swiper
           }}
           useViewOverflow={false}
-          onSwipedLeft={() => this.onSwiped('left')}
-          onSwipedRight={() => this.onSwiped('right')}
-          onSwipedTop={() => this.onSwiped('top')}
+          onSwipedLeft={() => this.onSwiped('left', this.cardIndex)}
+          onSwipedRight={() => this.onSwiped('right', this.cardIndex)}
+          onSwipedTop={() => this.onSwiped('top', this.cardIndex)}
           disableBottomSwipe={true}
           onTapCard={this.swipeLeft}
           cards={this.state.cards}
-          cardIndex={this.state.cardIndex}
-          cardVerticalMargin={80}
+          onSwiped={(cardIndex) => {this.cardIndex = cardIndex}}
+          cardIndex={0}
+          cardVerticalMargin={60}
           renderCard={this.renderCard}
-          onSwipedAll={this.onSwipedAllCards}
+          backgroundColor={'white'}
           stackSize={3}
           stackSeparation={15}
           overlayLabels={{
@@ -138,9 +208,7 @@ class FindMovieList extends React.Component {
           }}
           animateOverlayLabelsOpacity
           animateCardOpacity
-          swipeBackCard
         >
-        <Button onPress={() => this.swiper.swipeBack()} title='Swipe Back' />
         </Swiper>
       </View>
     )
@@ -149,13 +217,13 @@ class FindMovieList extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF'
+    flex: 1
   },
   card: {
     flex: 1,
-    borderRadius: 5,
-    borderColor: '#E8E8E8',
+    borderWidth: 2,
+    borderRadius: 7,
+    borderColor: '#EDEDED',
     justifyContent: 'center',
     backgroundColor: 'white'
   },
@@ -176,10 +244,28 @@ const styles = StyleSheet.create({
     fontSize: 20,
     backgroundColor: 'transparent'
   },
+  img_container: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginHorizontal: 15
+  },
+  favorite_image: {
+    height: 30,
+    width: 30,
+    marginHorizontal: 10,
+    opacity: 0.3
+  },
   overview: {
     fontSize: 12,
     backgroundColor: 'transparent'
   }
 })
 
-export default FindMovieList
+const mapStateToProps = (state) => {
+  return {
+    favoriteFilm: state.toggleFavorite.favoriteFilm,
+    seenMovies: state.toggleSeen.seenMovies
+  }
+}
+
+export default connect(mapStateToProps)(FindMovieList)
