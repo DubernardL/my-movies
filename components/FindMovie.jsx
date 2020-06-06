@@ -13,15 +13,11 @@ class FindMovie extends React.Component {
 
   constructor(props) {
     super(props)
-    this.page = 0
-    this.totalPages = 0
     this.state = {
-      checked: false,
-      popularity_status: false,
+      popularity_checked: false,
       categories_id: [],
       categories_id_selected: [],
       min_rating: 0,
-      popularity: 40,
       similar_movie_id: null
     }
   }
@@ -34,16 +30,14 @@ class FindMovie extends React.Component {
     })
   }
 
-  _toogleChecked() {
-    if(this.state.checked) {
+  _tooglePopularityChecked() {
+    if(this.state.popularity_checked) {
       this.setState({
-        checked: false,
-        popularity_status: false
+        popularity_checked: false
       })
     } else {
       this.setState({
-        checked: true,
-        popularity_status: true,
+        popularity_checked: true
       })
     }
   }
@@ -89,9 +83,11 @@ class FindMovie extends React.Component {
           center
           title='Trouver dans les films les plus populaires'
           iconRight
-          checked={this.state.checked}
-          onPress={() => {}}
+          checked={this.state.popularity_checked}
+          onPress={() => {this._tooglePopularityChecked()}}
         />
+
+        <Text>{this.state.popularity_checked}</Text>
 
 
         <Select2
