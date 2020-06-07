@@ -54,3 +54,11 @@ export async function getPeople(query) {
   let data = await response.json()
   return data
 }
+
+export async function getMoviesByPeople(peoples, page) {
+  const peoples_id = []
+  peoples.forEach((people) => { peoples_id.push(people.id) })
+  let response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_people=${peoples_id.join()}&sort_by=popularity&language=fr&page=1`)
+  let data = await response.json()
+  return data
+}

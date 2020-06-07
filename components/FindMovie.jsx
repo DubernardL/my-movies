@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, FlatList, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Button, FlatList, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import { connect } from 'react-redux'
 // Pickers
 import Select2 from 'react-native-select-two'
@@ -46,10 +46,19 @@ class FindMovie extends React.Component {
   }
 
   navigateToSlider() {
-    this.props.navigation.navigate('FindMovieList', {
-      similar_movie_id: this.state.similar_movie_id,
-      categories_id_selected: this.state.categories_id_selected
-    })
+    if(this.state.categories_id_selected.length > 0) {
+      this.props.navigation.navigate('FindMovieList', {
+        categories_id_selected: this.state.categories_id_selected
+      })
+    } else if (this.state.peoples_selected.length > 0) {
+      this.props.navigation.navigate('FindMovieList', {
+        peoples_selected: this.state.peoples_selected
+      })
+    } else if (this.state.similar_movie_id != null) {
+      this.props.navigation.navigate('FindMovieList', {
+        similar_movie_id: this.state.similar_movie_id
+      })
+    }
   }
 
   _searchTextInputChanged(text) {
@@ -89,6 +98,9 @@ class FindMovie extends React.Component {
     return (
       <View style={styles.main_container}>
 
+        <Text style={styles.présentation}><Text style={{fontWeight: 'bold'}}>Tu ne sais pas quoi regarder ?</Text> T'es au bon endroit : entre tes filtres et parcours les films sélectionnés en fonction de ces derniers</Text>
+
+        <Text style={styles.text_of_inputs}>Trouver des films par genre(s) :</Text>
         <Select2
           style={{ borderRadius: 5 }}
           colorTheme={'blue'}
@@ -103,18 +115,11 @@ class FindMovie extends React.Component {
           onRemoveItem={data => { this.setState({ categories_id_selected: data })}}
         />
 
-        <Text>Note minimale : {this.state.min_rating}</Text>
-        <Slider
-          value={this.state.value}
-          onValueChange={value => this.setState({ min_rating: value })}
-          maximumValue={10}
-          minimumValue={0}
-          step={1}
-          thumbTintColor={ '#00a9ff' }
-          maximumTrackTintColor={"#B3B3B3"}
-          minimumTrackTintColor={"#00a9ff"}
-        />
+        <View style={styles.or}>
+          <Text style={styles.or_txt}>OU</Text>
+        </View>
 
+        <Text style={styles.text_of_inputs}>Trouver des films par acteur(s) :</Text>
         <TextInput
           style={styles.textinput}
           placeholder='Acteur'
@@ -128,30 +133,35 @@ class FindMovie extends React.Component {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({item}) => (
             <TouchableOpacity
-              style={styles.peoples_item}
+              style={[styles.peoples_item, {marginTop: 2}]}
               onPress={() => this.addPeople(item)}>
               <Text>{item.name}</Text>
             </TouchableOpacity>
           )}
         />
 
+        <View>
          <FlatList
+          style={styles.peoples_selected}
           data={this.state.peoples_selected}
+          numColumns={2}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({item}) => (
             <TouchableOpacity
-              style={styles.peoples_item}
+              style={[styles.peoples_item, {margin: 5}]}
               onPress={() => this.removePeople(item)}>
               <Text>{item.name}</Text>
             </TouchableOpacity>
           )}
         />
+        </View>
 
-
-        <Text>OU</Text>
+        <View style={styles.or}>
+          <Text style={styles.or_txt}>OU</Text>
+        </View>
 
         <View>
-          <Text>Trouver un film similaire :</Text>
+          <Text style={styles.text_of_inputs}>Trouver un film similaire :</Text>
           <Select2
             isSelectSingle
             style={{ borderRadius: 5 }}
@@ -168,7 +178,9 @@ class FindMovie extends React.Component {
           />
         </View>
 
-        <Button title='Trouver film' onPress={() => {this.navigateToSlider()}} />
+        <TouchableOpacity style={[styles.or, {marginTop: 20}]} onPress={() => this.navigateToSlider()}>
+          <Text style={[styles.or_txt, {fontSize: 20}]}>Trouver films</Text>
+        </TouchableOpacity>
       </View>
     )
   }
@@ -179,25 +191,49 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20
   },
+  présentation: {
+    color: '#6dc1c4',
+    marginVertical: 20,
+    fontSize: 15
+  },
+  text_of_inputs: {
+    color: '#18979b',
+    marginBottom: 10,
+  },
   textinput: {
-    borderColor: '#e3e5e8',
-    height: 50,
-    borderWidth: 2,
-    paddingLeft: 5,
-    borderRadius: 5,
-    marginRight: 5
+    borderColor: '#cecece',
+    borderWidth: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 7,
+    borderRadius: 5
   },
   list_peoples: {
     position: 'absolute',
     marginLeft: 20
   },
+  peoples_selected: {
+    flexDirection: 'row'
+  },
   peoples_item: {
     borderWidth: 1,
-    borderColor: '#e3e5e8',
+    borderColor: '#cecece',
     borderRadius: 5,
     padding: 5,
-    marginTop: 2,
-    backgroundColor: '#e3e5e8'
+    backgroundColor: '#cecece'
+  },
+  or: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 10
+  },
+  or_txt: {
+    color: 'white',
+    backgroundColor: '#5ed4ff',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderColor: '#5ed4ff',
+    borderRadius: 30,
+    fontWeight: 'bold'
   }
 })
 

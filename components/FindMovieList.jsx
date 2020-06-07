@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, Text, View, Button, Image } from 'react-native'
 import { connect } from 'react-redux'
 
 // API calls
-import { getSimilarMovies, getImageFromApi, getMoviesByGenre } from '../API/TMDBApi'
+import { getSimilarMovies, getImageFromApi, getMoviesByGenre, getMoviesByPeople } from '../API/TMDBApi'
 import Swiper from 'react-native-deck-swiper'
 
 class FindMovieList extends React.Component {
@@ -19,12 +19,15 @@ class FindMovieList extends React.Component {
   }
 
   componentDidMount(){
+    this.setState({
+      cards: []
+    })
     this.loadMovies()
   }
 
   loadMovies() {
     // SIMILAR MOVIES
-    if(this.props.navigation.state.params.similar_movie_id != null) {
+    if(this.props.navigation.state.params.similar_movie_id != undefined) {
       getSimilarMovies(this.props.navigation.state.params.similar_movie_id[0], this.state.page+1).then(data => {
         this.setState({
           cards: [...this.state.cards, ...data.results],
@@ -35,8 +38,19 @@ class FindMovieList extends React.Component {
       })
     }
     // MOVIES GENRE
-    if(this.props.navigation.state.params.categories_id_selected != []) {
+    if(this.props.navigation.state.params.categories_id_selected != undefined) {
       getMoviesByGenre(this.props.navigation.state.params.categories_id_selected, this.state.page+1).then(data => {
+        this.setState({
+          cards: [...this.state.cards, ...data.results],
+          totalPages: data.total_pages,
+          page: data.page,
+          length_card: this.state.cards.length
+        })
+      })
+    }
+    // MOVIES OF PEOPLE
+    if(this.props.navigation.state.params.peoples_selected != undefined) {
+      getMoviesByPeople(this.props.navigation.state.params.peoples_selected, this.state.page+1).then(data => {
         this.setState({
           cards: [...this.state.cards, ...data.results],
           totalPages: data.total_pages,
@@ -102,7 +116,6 @@ class FindMovieList extends React.Component {
     if(type === 'right' && favContain === undefined) {
       this.addMovieToFav(movie)
     }
-
     if(type === 'top' && seenContain === undefined) {
       this.addMovieToSeen(movie)
     }
@@ -116,10 +129,9 @@ class FindMovieList extends React.Component {
     this.swiper.swipeLeft()
   }
 
-  render () {
+  swipperOn() {
     return (
-      <View style={styles.container}>
-        <Swiper
+      <Swiper
           ref={swiper => {
             this.swiper = swiper
           }}
@@ -195,6 +207,23 @@ class FindMovieList extends React.Component {
           animateCardOpacity
         >
         </Swiper>
+      )
+  }
+
+  displaySwipper() {
+    if(this.state.cards.length === 0) {
+      return (
+        <Text>Rien trouvé</Text>
+        )
+    } else {
+      return this.swipperOn()
+    }
+  }
+
+  render () {
+    return (
+      <View style={styles.container}>
+        {this.displaySwipper()}
       </View>
     )
   }

@@ -50,7 +50,7 @@ class FilmDetail extends React.Component {
                         onPress={() => params.shareFilm()}>
                         <Image
                           style={styles.share_image}
-                          source={require('../assets/share.png')} />
+                          source={require('../assets/share.android.png')} />
                       </TouchableOpacity>
       }
     }
@@ -65,7 +65,7 @@ class FilmDetail extends React.Component {
           onPress={() => this._shareFilm()}>
           <Image
             style={styles.share_image}
-            source={require('../assets/share.png')} />
+            source={require('../assets/share.android.png')} />
         </TouchableOpacity>
       )
     }
