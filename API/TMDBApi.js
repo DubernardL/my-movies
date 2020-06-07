@@ -42,3 +42,15 @@ export async function getSimilarMovies(movie_id, page) {
   let data = await response.json()
   return data
 }
+
+export async function getMoviesByGenre(genres_movies, page) {
+  let response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_genres=${genres_movies.join()}&sort_by=popularity.desc&language=fr&page=${page}`)
+  let data = await response.json()
+  return data
+}
+
+export async function getPeople(query) {
+  let response = await fetch(`https://api.themoviedb.org/3/search/person?api_key=${TMDB_API_KEY}&query=${query}&language=fr&page=1`)
+  let data = await response.json()
+  return data
+}

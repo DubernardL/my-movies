@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, Text, View, Button, Image } from 'react-native'
 import { connect } from 'react-redux'
 
 // API calls
-import { getSimilarMovies, getImageFromApi } from '../API/TMDBApi'
+import { getSimilarMovies, getImageFromApi, getMoviesByGenre } from '../API/TMDBApi'
 import Swiper from 'react-native-deck-swiper'
 
 class FindMovieList extends React.Component {
@@ -11,12 +11,10 @@ class FindMovieList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      page: 1,
-      visited_pages: [],
-      total_pages: 1,
+      page: 0,
+      total_pages: 0,
       length_card: 0,
-      cards: [],
-      swipedAllCards: false
+      cards: []
     }
   }
 
@@ -25,31 +23,27 @@ class FindMovieList extends React.Component {
   }
 
   loadMovies() {
+    // SIMILAR MOVIES
     if(this.props.navigation.state.params.similar_movie_id != null) {
-      getSimilarMovies(this.props.navigation.state.params.similar_movie_id[0], this.state.page).then(data => {
+      getSimilarMovies(this.props.navigation.state.params.similar_movie_id[0], this.state.page+1).then(data => {
         this.setState({
           cards: [...this.state.cards, ...data.results],
-          length_card: this.state.cards.length,
-          total_pages: data.total_pages
+          totalPages: data.total_pages,
+          page: data.page,
+          length_card: this.state.cards.length
         })
       })
-
-      let RandomNumber = Math.floor(Math.random() * this.state.total_pages) + 1
-
-      if(this.state.visited_pages.length - 1 < this.state.total_pages) {
-        while(this.state.visited_pages.includes(RandomNumber)) {
-          let RandomNumber = Math.floor(Math.random() * this.state.total_pages) + 1
-        }
+    }
+    // MOVIES GENRE
+    if(this.props.navigation.state.params.categories_id_selected != []) {
+      getMoviesByGenre(this.props.navigation.state.params.categories_id_selected, this.state.page+1).then(data => {
         this.setState({
-          page: RandomNumber,
-          visited_pages: [...this.state.visited_pages, this.state.page]
+          cards: [...this.state.cards, ...data.results],
+          totalPages: data.total_pages,
+          page: data.page,
+          length_card: this.state.cards.length
         })
-      } else {
-        this.setState({
-          page: 1,
-          visited_pages: []
-        })
-      }
+      })
     }
   }
 
@@ -114,8 +108,6 @@ class FindMovieList extends React.Component {
     }
     // Dernière card ???
     if(cardIndex === this.state.length_card) {
-      console.log(cardIndex + '/' + this.state.length_card)
-      console.log(this.state.visited_pages)
       this.loadMovies()
     }
   }
@@ -123,13 +115,6 @@ class FindMovieList extends React.Component {
   swipeLeft = () => {
     this.swiper.swipeLeft()
   }
-
-  onSwipedAllCards = () => {
-    console.log('All card swipped')
-    this.setState({
-      swipedAllCards: true
-    })
-  };
 
   render () {
     return (
