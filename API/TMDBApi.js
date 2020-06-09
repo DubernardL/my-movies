@@ -37,8 +37,7 @@ export function getCategoriesFromApi() {
     .catch((error) => console.error(error));
 }
 
-export async function getSimilarMovies(movie_id, page) {
-  console.log('PAGE FROM API:' + page)
+ export async function getSimilarMovies(movie_id, page) {
   let response = await fetch(`https://api.themoviedb.org/3/movie/${movie_id}/similar?api_key=${TMDB_API_KEY}&language=fr&page=${page}`)
   let data = await response.json()
   return data

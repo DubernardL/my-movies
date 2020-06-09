@@ -12,7 +12,7 @@ class FindMovieList extends React.Component {
     super(props)
     this.state = {
       page: 0,
-      total_pages: 3,
+      total_pages: 2,
       length_card: 0,
       cards: []
     }
@@ -20,22 +20,17 @@ class FindMovieList extends React.Component {
 
   componentDidMount(){
     this.loadMovies()
-    console.log('ALLL///////')
-    console.log(this.state.cards)
   }
 
   loadMovies() {
     // SIMILAR MOVIES
     if(this.props.navigation.state.params.similar_movie_id.lenght != 0) {
       const movie_id = this.props.navigation.state.params.similar_movie_id[0]
-      for(let page = 1; page <= this.state.total_pages; page++) {
-        getSimilarMovies(movie_id, page).then(data => {
-          this.setState({
-            cards: [...this.state.cards, ...data.results],
-            totalPages: data.total_pages
-          })
+      getSimilarMovies(movie_id, this.state.page+1).then(data => {
+        this.setState({
+          cards: [...this.state.cards, ...data.results]
         })
-      }
+      })
     }
     // MOVIES GENRE
     if(this.props.navigation.state.params.categories_id_selected != undefined) {
@@ -119,7 +114,6 @@ class FindMovieList extends React.Component {
     if(type === 'top' && seenContain === undefined) {
       this.addMovieToSeen(movie)
     }
-    console.log(cardIndex + '/' + this.state.cards.length)
   }
 
   swipeLeft = () => {
@@ -132,6 +126,7 @@ class FindMovieList extends React.Component {
           ref={swiper => {
             this.swiper = swiper
           }}
+          onSwipedAll={() => {this.loadMovies()}}
           useViewOverflow={false}
           onSwipedLeft={() => this.onSwiped('left', this.cardIndex)}
           onSwipedRight={() => this.onSwiped('right', this.cardIndex)}
