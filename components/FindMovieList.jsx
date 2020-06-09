@@ -12,30 +12,30 @@ class FindMovieList extends React.Component {
     super(props)
     this.state = {
       page: 0,
-      total_pages: 0,
+      total_pages: 3,
       length_card: 0,
       cards: []
     }
   }
 
   componentDidMount(){
-    this.setState({
-      cards: []
-    })
     this.loadMovies()
+    console.log('ALLL///////')
+    console.log(this.state.cards)
   }
 
   loadMovies() {
     // SIMILAR MOVIES
-    if(this.props.navigation.state.params.similar_movie_id != undefined) {
-      getSimilarMovies(this.props.navigation.state.params.similar_movie_id[0], this.state.page+1).then(data => {
-        this.setState({
-          cards: [...this.state.cards, ...data.results],
-          totalPages: data.total_pages,
-          page: data.page,
-          length_card: this.state.cards.length
+    if(this.props.navigation.state.params.similar_movie_id.lenght != 0) {
+      const movie_id = this.props.navigation.state.params.similar_movie_id[0]
+      for(let page = 1; page <= this.state.total_pages; page++) {
+        getSimilarMovies(movie_id, page).then(data => {
+          this.setState({
+            cards: [...this.state.cards, ...data.results],
+            totalPages: data.total_pages
+          })
         })
-      })
+      }
     }
     // MOVIES GENRE
     if(this.props.navigation.state.params.categories_id_selected != undefined) {
@@ -65,6 +65,10 @@ class FindMovieList extends React.Component {
     if (card != undefined) {
       return (
         <View style={styles.card}>
+          <View style={styles.img_container}>
+            {this.diplayFav(card)}
+            {this.diplaySeen(card)}
+          </View>
           <View style={styles.img}>
             <Image
               style={styles.poster}
@@ -72,12 +76,8 @@ class FindMovieList extends React.Component {
             />
           </View>
           <View style={styles.description}>
-            <View style={styles.img_container}>
-              {this.diplayFav(card)}
-              {this.diplaySeen(card)}
-            </View>
             <Text style={styles.title}>{card.title}</Text>
-            <Text style={styles.overview} numberOfLines={9}>{card.overview}</Text>
+            <Text style={styles.overview} numberOfLines={7}>{card.overview}</Text>
           </View>
         </View>
       )
@@ -87,14 +87,14 @@ class FindMovieList extends React.Component {
   diplayFav(movie) {
     const favContain = this.props.favoriteFilm.find(e => e.id === movie.id)
     if(favContain != undefined) {
-      return(<Image source={require('../assets/seen.png')} style={styles.favorite_image}/>)
+      return(<Image source={require('../assets/plain_heart.png')} style={styles.favorite_image}/>)
     }
   }
 
   diplaySeen(movie) {
     const seenContain = this.props.seenMovies.find(e => e.id === movie.id)
     if(seenContain != undefined) {
-      return(<Image source={require('../assets/plain_heart.png')} style={styles.favorite_image}/>)
+      return(<Image source={require('../assets/seen.png')} style={styles.favorite_image}/>)
     }
   }
 
@@ -119,10 +119,7 @@ class FindMovieList extends React.Component {
     if(type === 'top' && seenContain === undefined) {
       this.addMovieToSeen(movie)
     }
-    // Dernière card ???
-    if(cardIndex === this.state.length_card) {
-      this.loadMovies()
-    }
+    console.log(cardIndex + '/' + this.state.cards.length)
   }
 
   swipeLeft = () => {
@@ -144,11 +141,11 @@ class FindMovieList extends React.Component {
           cards={this.state.cards}
           onSwiped={(cardIndex) => {this.cardIndex = cardIndex}}
           cardIndex={0}
-          cardVerticalMargin={60}
+          cardVerticalMargin={40}
           renderCard={this.renderCard}
-          backgroundColor={'white'}
-          stackSize={3}
-          stackSeparation={15}
+          backgroundColor={'#5ed4ff'}
+          stackSize={2}
+          stackSeparation={0}
           overlayLabels={{
             left: {
               title: 'NOPE',
@@ -234,44 +231,38 @@ const styles = StyleSheet.create({
     flex: 1
   },
   card: {
-    flex: 1,
+    height: 530,
     borderWidth: 2,
     borderRadius: 7,
     borderColor: '#EDEDED',
     justifyContent: 'center',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    padding: 20
   },
   img: {
-    flex: 1,
+    alignItems: 'center'
   },
   poster: {
-    flex: 1,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5
-  },
-  description: {
-    flex: 1,
-    padding: 10
+    width: 200,
+    height: 290
   },
   title: {
     textAlign: 'center',
-    fontSize: 20,
-    backgroundColor: 'transparent'
+    marginTop: 10,
+    fontSize: 20
   },
   img_container: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginHorizontal: 15
+    justifyContent: 'space-between'
   },
   favorite_image: {
-    height: 30,
-    width: 30,
-    marginHorizontal: 10,
-    opacity: 0.3
+    height: 40,
+    width: 40,
+    marginBottom: 10,
+    opacity: 0.5
   },
   overview: {
-    fontSize: 12,
-    backgroundColor: 'transparent'
+    fontSize: 12
   }
 })
 
