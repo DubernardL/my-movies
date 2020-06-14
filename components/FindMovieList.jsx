@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, FlatList, Text, View, Button, Image } from 'react-native'
+import { ActivityIndicator, StyleSheet, FlatList, Text, View, Button, Image } from 'react-native'
 import { connect } from 'react-redux'
 
 // API calls
@@ -11,24 +11,28 @@ class FindMovieList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      page: 0,
-      total_pages: 2,
+      cards: [],
+      page: 1,
+      total_pages: 10,
       length_card: 0,
-      cards: []
+      isLoading: false,
+      allSwipped: false
     }
   }
 
   componentDidMount(){
+    this.setState({ isLoading: true })
     this.loadMovies()
   }
 
   loadMovies() {
     // SIMILAR MOVIES
-    if(this.props.navigation.state.params.similar_movie_id.lenght != 0) {
+    if(this.props.navigation.state.params.similar_movie_id != undefined) {
       const movie_id = this.props.navigation.state.params.similar_movie_id[0]
-      getSimilarMovies(movie_id, this.state.page+1).then(data => {
+      getSimilarMovies(movie_id, 1).then(data => {
         this.setState({
-          cards: [...this.state.cards, ...data.results]
+          cards: data,
+          isLoading: false
         })
       })
     }
@@ -36,10 +40,8 @@ class FindMovieList extends React.Component {
     if(this.props.navigation.state.params.categories_id_selected != undefined) {
       getMoviesByGenre(this.props.navigation.state.params.categories_id_selected, this.state.page+1).then(data => {
         this.setState({
-          cards: [...this.state.cards, ...data.results],
-          totalPages: data.total_pages,
-          page: data.page,
-          length_card: this.state.cards.length
+          cards: data,
+          isLoading: false
         })
       })
     }
@@ -47,10 +49,8 @@ class FindMovieList extends React.Component {
     if(this.props.navigation.state.params.peoples_selected != undefined) {
       getMoviesByPeople(this.props.navigation.state.params.peoples_selected, this.state.page+1).then(data => {
         this.setState({
-          cards: [...this.state.cards, ...data.results],
-          totalPages: data.total_pages,
-          page: data.page,
-          length_card: this.state.cards.length
+          cards: data,
+          isLoading: false
         })
       })
     }
@@ -120,13 +120,24 @@ class FindMovieList extends React.Component {
     this.swiper.swipeLeft()
   }
 
+  allCardsSwipped() {
+    console.log('ALL SWIPPED')
+    if (this.state.allSwipped) {
+      return(
+        <View style={styles.container_all_swipped}>
+          <Text style={styles.txt_all_swipped}>On pas plus de films pour les critères que tu as entrés...</Text>
+        </View>
+      )
+    }
+  }
+
   swipperOn() {
     return (
       <Swiper
           ref={swiper => {
             this.swiper = swiper
           }}
-          onSwipedAll={() => {this.loadMovies()}}
+          onSwipedAll={() => this.setState({ allSwipped: true }) }
           useViewOverflow={false}
           onSwipedLeft={() => this.onSwiped('left', this.cardIndex)}
           onSwipedRight={() => this.onSwiped('right', this.cardIndex)}
@@ -203,12 +214,19 @@ class FindMovieList extends React.Component {
   }
 
   displaySwipper() {
-    if(this.state.cards.length === 0) {
-      return (
-        <Text>Rien trouvé</Text>
-        )
-    } else {
+    if(this.state.cards.length != 0) {
       return this.swipperOn()
+    }
+  }
+
+  _displayLoading() {
+    if (this.state.isLoading) {
+      return (
+        <View style={styles.loading_container}>
+          <Text>On cherche tes films :D</Text>
+          <ActivityIndicator size='large' />
+        </View>
+      )
     }
   }
 
@@ -216,6 +234,8 @@ class FindMovieList extends React.Component {
     return (
       <View style={styles.container}>
         {this.displaySwipper()}
+        {this._displayLoading()}
+        {this.allCardsSwipped()}
       </View>
     )
   }
@@ -258,6 +278,26 @@ const styles = StyleSheet.create({
   },
   overview: {
     fontSize: 12
+  },
+  loading_container: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 100,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  container_all_swipped: {
+    flex: 1,
+    padding: 50,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  txt_all_swipped: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 30
   }
 })
 

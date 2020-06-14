@@ -38,15 +38,27 @@ export function getCategoriesFromApi() {
 }
 
  export async function getSimilarMovies(movie_id, page) {
-  let response = await fetch(`https://api.themoviedb.org/3/movie/${movie_id}/similar?api_key=${TMDB_API_KEY}&language=fr&page=${page}`)
-  let data = await response.json()
-  return data
+  let results = []
+  let max_pages = 2
+  for(let p = 1; p <= max_pages; p++) {
+    let response = await fetch(`https://api.themoviedb.org/3/movie/${movie_id}/similar?api_key=${TMDB_API_KEY}&language=fr&page=${p}`)
+    let data = await response.json()
+    results.push(data.results)
+    data.total_pages > 15 ? max_pages = 2 : max_pages = 2
+  }
+  return results.flat()
 }
 
 export async function getMoviesByGenre(genres_movies, page) {
-  let response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_genres=${genres_movies.join()}&sort_by=popularity.desc&language=fr&page=${page}`)
-  let data = await response.json()
-  return data
+  let results = []
+  let max_pages = 2
+  for(let p = 1; p <= max_pages; p++) {
+    let response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_genres=${genres_movies.join()}&sort_by=popularity.desc&language=fr&page=${p}`)
+    let data = await response.json()
+    results.push(data.results)
+    data.total_pages > 15 ? max_pages = 15 : max_pages = data.total_pages
+  }
+  return results.flat()
 }
 
 export async function getPeople(query) {
@@ -58,7 +70,13 @@ export async function getPeople(query) {
 export async function getMoviesByPeople(peoples, page) {
   const peoples_id = []
   peoples.forEach((people) => { peoples_id.push(people.id) })
-  let response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_people=${peoples_id.join()}&sort_by=popularity&language=fr&page=1`)
-  let data = await response.json()
-  return data
+  let results = []
+  let max_pages = 2
+  for(let p = 1; p <= max_pages; p++) {
+    let response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&with_people=${peoples_id.join()}&sort_by=popularity&language=fr&page=${p}`)
+    let data = await response.json()
+    results.push(data.results)
+    data.total_pages > 15 ? max_pages = 15 : max_pages = data.total_pages
+  }
+  return results.flat()
 }
