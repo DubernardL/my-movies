@@ -1,13 +1,20 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, FlatList, TextInput, TouchableOpacity, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, Button, FlatList, TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native'
 import { connect } from 'react-redux'
+import Icon from 'react-native-vector-icons/FontAwesome';
 // Pickers
 import Select2 from 'react-native-select-two'
 import CustomMultiPicker from "react-native-multiple-select-list"
 import { Slider, CheckBox } from 'react-native-elements'
-import SearchableDropdown from 'react-native-searchable-dropdown';
+import SearchableDropdown from 'react-native-searchable-dropdown'
 // API calls
 import { getCategoriesFromApi, getPeople } from '../API/TMDBApi'
+
+// REMOVE A WARNING
+import { YellowBox } from 'react-native'
+YellowBox.ignoreWarnings([
+  'VirtualizedLists should never be nested'
+])
 
 class FindMovie extends React.Component {
 
@@ -96,14 +103,29 @@ class FindMovie extends React.Component {
   render() {
     const { navigation } = this.props
     return (
-      <View style={styles.main_container}>
+      <ScrollView style={styles.main_container}>
 
-        <Text style={styles.présentation}><Text style={{fontWeight: 'bold'}}>Tu ne sais pas quoi regarder ?</Text> T'es au bon endroit : entre tes filtres et parcours les films sélectionnés en fonction de ces derniers</Text>
+        <Text style={[styles.presentation, {marginTop: 20}]}>
+          <Text style={{fontWeight: 'bold'}}>Tu ne sais pas quoi regarder ?</Text> T'es au bon endroit : entres tes filtres et parcours les films sélectionnés ! Une fois la recherche effectuée :
+        </Text>
+
+        <View style={styles.instructions_container}>
+          <View style={styles.instruction}>
+            <Icon style={styles.icon_instruction} name='arrow-circle-up' size={25} color='#1177a2' /><Text style={styles.presentation}>Glisser vers le haut pour ajouter le film à vos films "Déjà vu"</Text>
+          </View>
+          <View style={styles.instruction}>
+            <Icon style={styles.icon_instruction} name='arrow-circle-right' size={25} color='#1177a2' /><Text style={styles.presentation}>Glisser vers la droite pour ajouter le film à vos films "Favoris"</Text>
+          </View>
+          <View style={styles.instruction}>
+            <Icon style={styles.icon_instruction} name='arrow-circle-left' size={25} color='#1177a2' /><Text style={styles.presentation}>Glisser vers la gauche pour passer le film</Text>
+          </View>
+        </View>
+
 
         <Text style={styles.text_of_inputs}>Trouver des films par genre(s) :</Text>
         <Select2
           style={{ borderRadius: 5 }}
-          colorTheme={'blue'}
+          colorTheme={'#1177a2'}
           popupTitle='Selectionner un ou plusieurs genres'
           title='Selection genre(s)'
           cancelButtonText='Annuler'
@@ -140,8 +162,7 @@ class FindMovie extends React.Component {
           )}
         />
 
-        <View>
-         <FlatList
+        <FlatList
           style={styles.peoples_selected}
           data={this.state.peoples_selected}
           numColumns={2}
@@ -154,7 +175,6 @@ class FindMovie extends React.Component {
             </TouchableOpacity>
           )}
         />
-        </View>
 
         <View style={styles.or}>
           <Text style={styles.or_txt}>OU</Text>
@@ -165,13 +185,13 @@ class FindMovie extends React.Component {
           <Select2
             isSelectSingle
             style={{ borderRadius: 5 }}
-            colorTheme={'blue'}
+            colorTheme={'#1177a2'}
             popupTitle='Sélectionner un film'
             title='Sélectionner un film'
             cancelButtonText='Annuler'
             selectButtonText='Valider'
             searchPlaceHolderText='Rechercher film'
-            listEmptyTitle='Il faut avoir vu le film'
+            listEmptyTitle='Il faut avoir vu le film pour trouver un film similaire ...'
             data={this.props.seenMovies}
             onSelect={data => this.setState({ similar_movie_id: data })}
             onRemoveItem={data => { this.setState({ similar_movie_id: data })}}
@@ -181,7 +201,7 @@ class FindMovie extends React.Component {
         <TouchableOpacity style={[styles.or, {marginTop: 20}]} onPress={() => this.navigateToSlider()}>
           <Text style={[styles.or_txt, {fontSize: 20}]}>Trouver films</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     )
   }
 }
@@ -191,13 +211,23 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20
   },
-  présentation: {
-    color: '#6dc1c4',
-    marginVertical: 20,
+  presentation: {
+    color: '#1177a2',
     fontSize: 15
   },
+  instructions_container: {
+    marginTop: 5,
+    marginBottom: 20
+  },
+  instruction: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  icon_instruction: {
+    marginRight: 5
+  },
   text_of_inputs: {
-    color: '#18979b',
+    color: '#1177a2',
     marginBottom: 10,
   },
   textinput: {
@@ -228,10 +258,10 @@ const styles = StyleSheet.create({
   },
   or_txt: {
     color: 'white',
-    backgroundColor: '#5ed4ff',
+    backgroundColor: '#1177a2',
     paddingVertical: 10,
     paddingHorizontal: 15,
-    borderColor: '#5ed4ff',
+    borderColor: '#1177a2',
     borderRadius: 30,
     fontWeight: 'bold'
   }

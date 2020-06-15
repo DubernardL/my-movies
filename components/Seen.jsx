@@ -1,19 +1,28 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import FilmList from './FilmList'
+import { StyleSheet, Text, View, FlatList } from 'react-native'
+import FilmItem2 from './FilmItem2'
 import { connect } from 'react-redux'
 
 class Seen extends React.Component {
 
+  _displayDetailForFilm = (idFilm) => {
+    this.props.navigation.navigate('FilmDetail', {idFilm: idFilm})
+  }
+
   render() {
     return (
-      <View style={styles.main_container}>
-        <FilmList
-          films={this.props.seenMovies}
-          navigation={this.props.navigation}
-          favoriteList={true}
-        />
-      </View>
+      <FlatList
+        data={this.props.seenMovies}
+        extraData={[this.props.favoriteFilm, this.props.seenMovies]}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({item}) => (
+          <FilmItem2
+              film={item}
+              isMovieSeen={(this.props.seenMovies.findIndex(film => film.id === item.id) !== -1) ? true : false}
+              displayDetailForFilm={this._displayDetailForFilm}
+            />
+        )}
+      />
     )
   }
 }
@@ -34,3 +43,8 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps)(Seen)
+
+
+
+
+

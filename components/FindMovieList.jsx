@@ -149,7 +149,7 @@ class FindMovieList extends React.Component {
           cardIndex={0}
           cardVerticalMargin={40}
           renderCard={this.renderCard}
-          backgroundColor={'#5ed4ff'}
+          backgroundColor={'#1177a2'}
           stackSize={2}
           stackSeparation={0}
           overlayLabels={{
@@ -259,7 +259,8 @@ const styles = StyleSheet.create({
   },
   poster: {
     width: 200,
-    height: 290
+    height: 290,
+    borderRadius: 5
   },
   title: {
     textAlign: 'center',
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     marginBottom: 10,
-    opacity: 0.5
+    opacity: 0.7
   },
   overview: {
     fontSize: 12

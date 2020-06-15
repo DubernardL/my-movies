@@ -3,7 +3,7 @@ import { StyleSheet, View, Button, TextInput, FlatList, Text, Image, TouchableOp
 import { getImageFromApi } from '../API/TMDBApi'
 import FadeIn from '../animations/FadeIn'
 
-class FilmItem extends React.Component {
+class FilmItem2 extends React.Component {
 
   _displayFav() {
     if(this.props.isFilmFavorite) {
@@ -40,21 +40,9 @@ class FilmItem extends React.Component {
             source={{uri: getImageFromApi(film.poster_path)}}
           />
           <View style={styles.content_container}>
-
             <View style={styles.header_container}>
-            <View style={{flexDirection: 'column'}}>
-              {this._displayFav()}
-              {this._displaySeen()}
-            </View>
               <Text style={styles.title_text}>{film.title}</Text>
               <Text style={styles.vote_text}>{film.vote_average}</Text>
-            </View>
-
-            <View style={styles.description_container}>
-              <Text style={styles.description_text} numberOfLines={6}>{film.overview}</Text>
-            </View>
-            <View style={styles.date_container}>
-              <Text style={styles.date_text}>Sorti le {film.release_date}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -65,14 +53,17 @@ class FilmItem extends React.Component {
 
 const styles = StyleSheet.create({
   main_container: {
-    height: 190,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingVertical: 10,
+    marginHorizontal: 10,
+    borderBottomWidth: 2,
+    borderBottomColor: '#b8d8e0'
   },
   image: {
-    width: 120,
-    height: 180,
-    margin: 5,
-    backgroundColor: 'gray'
+    width: 80,
+    height: 80,
+    borderRadius: 50,
+    marginRight: 5
   },
   content_container: {
     flex: 1,
@@ -80,11 +71,12 @@ const styles = StyleSheet.create({
   },
   header_container: {
     flex: 3,
+    alignItems: 'center',
     flexDirection: 'row'
   },
   title_text: {
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
     flex: 1,
     flexWrap: 'wrap',
     paddingRight: 5
@@ -114,4 +106,4 @@ const styles = StyleSheet.create({
     marginRight: 5
   }
 })
-export default FilmItem
+export default FilmItem2

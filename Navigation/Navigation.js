@@ -96,7 +96,7 @@ const MoviesTabNavigator = createBottomTabNavigator(
       navigationOptions: {
         tabBarIcon: () => {
           return <Image
-            source={require('../assets/seen.png')}
+            source={require('../assets/swipper.png')}
             style={styles.icon}/>
         }
       }
