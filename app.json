@@ -2,19 +2,19 @@
   "expo": {
     "name": "My Movies",
     "slug": "my-movies",
-    "description": "retrouver vos films préférés et des infos les concernants",
+    "description": "Retrouver vos films préférés, les infos les concernants et découvrez de nouveaux films !",
     "platforms": [
       "ios",
       "android",
       "web"
     ],
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1177a2"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -24,7 +24,7 @@
     ],
     "android": {
       "package": "com.lucasdub.my_movies",
-      "versionCode": 2
+      "versionCode": 3
     },
     "ios": {
       "supportsTablet": true
