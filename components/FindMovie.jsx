@@ -88,6 +88,7 @@ class FindMovie extends React.Component {
   addPeople(people) {
     if(!this.state.peoples_selected.includes(people)) {
       this.setState({
+        peoples: [],
         peoples_selected: [...this.state.peoples_selected, people]
       })
     }
@@ -150,14 +151,13 @@ class FindMovie extends React.Component {
         />
 
         <FlatList
-          style={styles.list_peoples}
           data={this.state.peoples}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({item}) => (
             <TouchableOpacity
               style={[styles.peoples_item, {marginTop: 2}]}
               onPress={() => this.addPeople(item)}>
-              <Text>{item.name}</Text>
+              <Text style={{color:'white'}}>{item.name}</Text>
             </TouchableOpacity>
           )}
         />
@@ -171,7 +171,7 @@ class FindMovie extends React.Component {
             <TouchableOpacity
               style={[styles.peoples_item, {margin: 5}]}
               onPress={() => this.removePeople(item)}>
-              <Text>{item.name}</Text>
+              <Text style={{color:'white'}}>{item.name}</Text>
             </TouchableOpacity>
           )}
         />
@@ -194,7 +194,7 @@ class FindMovie extends React.Component {
             listEmptyTitle='Il faut avoir vu le film pour trouver un film similaire ...'
             data={this.props.seenMovies}
             onSelect={data => this.setState({ similar_movie_id: data })}
-            onRemoveItem={data => { this.setState({ similar_movie_id: data })}}
+            onRemoveItem={data => this.setState({ similar_movie_id: data })}
           />
         </View>
 
@@ -237,19 +237,15 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 5
   },
-  list_peoples: {
-    position: 'absolute',
-    marginLeft: 20
-  },
   peoples_selected: {
     flexDirection: 'row'
   },
   peoples_item: {
     borderWidth: 1,
-    borderColor: '#cecece',
+    borderColor: '#1177a2',
     borderRadius: 5,
     padding: 5,
-    backgroundColor: '#cecece'
+    backgroundColor: '#1177a2'
   },
   or: {
     flexDirection: 'row',

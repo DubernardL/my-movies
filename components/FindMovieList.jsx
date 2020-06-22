@@ -57,6 +57,7 @@ class FindMovieList extends React.Component {
   }
 
   renderCard = (card, index) => {
+    console.log(card)
     if (card != undefined) {
       return (
         <View style={styles.card}>
@@ -216,6 +217,16 @@ class FindMovieList extends React.Component {
   displaySwipper() {
     if(this.state.cards.length != 0) {
       return this.swipperOn()
+    } else if (this.state.isLoading === false) {
+      return (
+        <View style={styles.loading_container}>
+          <Text style={styles.loading_txt}>On a rien trouvé désolé ...</Text>
+          <Image
+            style={{width: 70, height:70}}
+            source={require('../assets/unfound.png')}
+          />
+        </View>
+      )
     }
   }
 
@@ -223,7 +234,7 @@ class FindMovieList extends React.Component {
     if (this.state.isLoading) {
       return (
         <View style={styles.loading_container}>
-          <Text>On cherche tes films :D</Text>
+          <Text style={styles.loading_txt}>On cherche tes films :D</Text>
           <ActivityIndicator size='large' />
         </View>
       )
@@ -281,13 +292,13 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   loading_container: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 100,
-    bottom: 0,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  loading_txt: {
+    color: '#1177a2',
+    fontSize: 25
   },
   container_all_swipped: {
     flex: 1,
