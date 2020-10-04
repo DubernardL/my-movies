@@ -57,7 +57,6 @@ class FindMovieList extends React.Component {
   }
 
   renderCard = (card, index) => {
-    console.log(card)
     if (card != undefined) {
       return (
         <View style={styles.card}>
@@ -122,7 +121,6 @@ class FindMovieList extends React.Component {
   }
 
   allCardsSwipped() {
-    console.log('ALL SWIPPED')
     if (this.state.allSwipped) {
       return(
         <View style={styles.container_all_swipped}>
